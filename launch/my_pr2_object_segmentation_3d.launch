@@ -1,16 +1,11 @@
 <launch>
 
-  <!-- <arg name="gui" default="true" /> -->
   <arg name="gui" default="false" />
-
-  <!-- <include file="$(find jsk_apc2016_common)/samples/fetch_openni_local.launch" /> -->
-  <include file="$(find pr2_picking)/launch/pr2_openni_local.launch" />
 
   <!-- <arg name="INPUT_IMAGE" value="/head_camera_local/rgb/image_rect_color" /> -->
   <!-- <arg name="INPUT_CLOUD" value="/head_camera_local/depth_registered/points" /> -->
-  <arg name="INPUT_IMAGE" value="/wide_stereo/right/image_color" />
-  <!-- <arg name="INPUT_CLOUD" value="/assemble_scans_client/output" /> -->
-  <arg name="INPUT_CLOUD" value="/kinect_head/depth_registered/image_raw" />
+  <arg name="INPUT_IMAGE" value="/kinect_head_localhost/rgb/image_rect_color" />
+  <arg name="INPUT_CLOUD" value="/add_color_organized/output" />
 
   <!-- visualization -->
   <node name="label_image_decomposer"
@@ -59,12 +54,10 @@
     </rosparam>
   </node>
 
-   <!-- <include file="$(find jsk_apc2016_common)/launch/object_segmentation_3d.launch"> -->
-   <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
+  <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
     <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
     <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)" />
     <arg name="INPUT_CLOUD" value="extract_indices_table/output" />
-    <!-- <arg name="INPUT_CLOUD" value="assemble_scans_client/output" /> -->
     <arg name="FIXED_FRAME" value="base_link" />
   </include>
 
@@ -72,10 +65,8 @@
     <node name="rviz"
           pkg="rviz" type="rviz"
           args="-d $(find pr2_picking)/rviz/sample_object_segmentation_3d.rviz">
-      <!-- <remap from="/head_camera/rgb/image_rect_color" to="/head_camera_local/rgb/image_rect_color" /> -->
-      <!-- <remap from="/head_camera/depth_registered/points" to="/head_camera_local/depth_registered/points" /> -->
-      <remap from="/head_camera/rgb/image_rect_color" to="/wide_stereo/right/image_color" />
-      <remap from="/head_camera/depth_registered/points" to="/kinect_head/depth_registered/points" />
+      <remap from="/head_camera/rgb/image_rect_color" to="/kinect_head_local/rgb/image_rect_color" />
+      <remap from="/head_camera/depth_registered/points" to="/add_color_organized/output" />
     </node>
   </group>
 
