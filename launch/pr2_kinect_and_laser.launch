@@ -48,13 +48,18 @@
 
 <!-- {{ laser -->
 
+  <node name="laser_profile_commander"
+        pkg="laser_scan_3d"
+        type="my_robot_cal_tilt_profile.py"
+        args="laser_tilt_controller 119" />
+
   <node name="laser_scan_assembler"
         pkg="laser_assembler" type="laser_scan_assembler">
     <remap from="scan" to="/tilt_scan" />
     <rosparam>
       fixed_frame: base_link
       tf_cache_time_secs: 10.0
-      max_scans: 400
+      max_scans: 4800
       ignore_laser_skew: true
     </rosparam>
   </node>
@@ -106,23 +111,5 @@
   </node>
 
 <!-- }} organize laser -->
-
-<!--
-  <node name="laser_scan_to_point_cloud2"
-        pkg="laser_scan_3d" type="laser_scan_to_point_cloud2.py">
-    <remap from="scan" to="/tilt_scan" />
-  </node>
-  <node pkg="jsk_pcl_ros" type="tilt_laser_listener"
-        name="tilt_laser_listener"
-        output="screen">
-    <remap from="~input" to="/joint_states" />
-    <rosparam>
-      laser_type: tilt
-      joint_name: laser_tilt_mount_joint
-      use_laser_assembler: false
-    </rosparam>
-    <remap from="~assemble_scans2" to="assemble_scans2" />
-  </node>
--->
 
 </launch>
