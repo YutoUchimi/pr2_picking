@@ -1,5 +1,5 @@
 <launch>
   <include file="$(find pr2_picking)/launch/pr2_kinect_and_laser.launch" />
-  <!-- <include file="$(find pr2_picking)/launch/my_pr2_object_segmentation_3d.launch" /> -->
+  <include file="$(find pr2_picking)/launch/my_pr2_object_segmentation_3d.launch" />
   <include file="$(find pr2_picking)/launch/pr2_detect_3_colors.launch" />
 </launch>
