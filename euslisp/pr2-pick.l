@@ -114,7 +114,7 @@
 
 
 (defun try-grasp()
-  (send *ri* :go-grasp :effort 60))
+  (send *ri* :start-grasp :rarm))
 
 
 (defun pick()
@@ -155,6 +155,6 @@
                     :rotation-axis nil)
         (move 5000)
 
-        (send *ri* :stop-grasp)
+        (send *ri* :stop-grasp :rarm)
 
         (init))))
