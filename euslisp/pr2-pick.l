@@ -5,8 +5,9 @@
 (ros::load-ros-manifest "sensor_msgs")
 (ros::load-ros-manifest "std_msgs")
 (ros::load-ros-manifest "roseus")
+(require "package://pr2eus_moveit/euslisp/collision-object-publisher.l")
 (require "package://pr2eus/pr2-interface.l")
-(ros::roseus "pick")
+(ros::roseus "picking_manipulation_node")
 (ros::advertise "stop_moveit" std_msgs::string 100)
 
 (setq str_msg (instance std_msgs::string :init))
