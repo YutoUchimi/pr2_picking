@@ -57,7 +57,7 @@
   (setq head-z (aref (send (send *pr2* :head-end-coords) :worldpos) 2))
   (send *pr2* :head :neck-y :joint-angle (rad2deg (atan (/ (- y head-y) x))))
   (send *pr2* :head :neck-p :joint-angle (rad2deg (atan (/ (- head-z z) x))))
-  (send *ri* :angle-vector-raw (send *pr2* :angle-vector) 1000 :head-controller)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
   (send *ri* :wait-interpolation :head-controller))
 
 
@@ -65,17 +65,18 @@
 (defun search-for-object()
   (recog-target)
   (let ((flag t))
-    (if (and center box)
-        (progn (look-at) (setq flag nil) (format t "111~%"))
-      (progn (send *pr2* :head :neck-y :joint-angle 30) ;; see left
-             (send *ri* :angle-vector-raw (send *pr2* :angle-vector) 1000 :head-controller)
-             (recog-target)))
+    (if flag
+        (if (and center box)
+            (progn (look-at) (setq flag nil) (format t "111~%"))
+          (progn (send *pr2* :head :neck-y :joint-angle 30) ;; see left
+                 (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
+                 (recog-target))))
 
     (if flag
         (if (and center box)
             (progn (look-at) (setq flag nil) (format t "222~%"))
           (progn (send *pr2* :head :neck-y :joint-angle -30) ;; see right
-                 (send *ri* :angle-vector-raw (send *pr2* :angle-vector) 1000 :head-controller)
+                 (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
     (if flag
@@ -83,21 +84,22 @@
             (progn (look-at) (setq flag nil) (format t "333~%"))
           (progn (send *pr2* :head :neck-p :joint-angle -30)
                  (send *pr2* :head :neck-y :joint-angle 0) ;; see up
-                 (send *ri* :angle-vector-raw (send *pr2* :angle-vector) 1000 :head-controller)
+                 (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
     (if flag
         (if (and center box)
             (progn (look-at) (setq flag nil) (format t "444~%"))
           (progn (send *pr2* :head :neck-p :joint-angle 30) ;; see down
-                 (send *ri* :angle-vector-raw (send *pr2* :angle-vector) 1000 :head-controller)
+                 (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
     (if flag
         (if (and center box)
             (progn (look-at) (setq flag nil))
           (progn (send *pr2* :head :neck-p :joint-angle 0) ;; see front
-                 (send *ri* :angle-vector-raw (send *pr2* :angle-vector) 1000 :head-controller))))
+                 (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
+                 (recog-target))))
 
     (if (null flag)
         (progn (format t "find object!~%") t)
@@ -113,10 +115,6 @@
     (send *ri* :wait-interpolation)))
 
 
-(defun try-grasp()
-  (send *ri* :start-grasp :rarm))
-
-
 (defun pick()
   (init)
   (ros::publish "stop_moveit" str_msg)
@@ -126,35 +124,35 @@
         (send str_msg :data "stop")
         (ros::publish "stop_moveit" str_msg)
 
-        (send *pr2* :inverse-kinematics
+        (send *pr2* :larm :inverse-kinematics
               (make-coords :pos (v+ (float-vector x y z) #f(-200 0 200)))
-                    :debug-view t)
+                    :debug-view nil)
         (move 10000)
 
-        (send *pr2* :inverse-kinematics
+        (send *pr2* :larm :inverse-kinematics
               (make-coords :pos (float-vector x y z))
-                    :debug-view t)
+                    :debug-view nil)
         (move 5000)
 
-        (try-grasp)
+        (send *ri* :start-grasp :larm)
         (send *ri* :wait-interpolation)
 
-        (send *pr2* :inverse-kinematics
+        (send *pr2* :larm :inverse-kinematics
               (make-coords :pos (v+ (float-vector x y z) #f(-200 0 200)))
-                    :debug-view t)
+                    :debug-view nil)
         (move 3000)
 
-        (send *pr2* :inverse-kinematics
+        (send *pr2* :larm :inverse-kinematics
               (make-coords :pos (float-vector 350 600 (+ z 100)))
-                    :debug-view t)
+                    :debug-view nil)
         (move 5000)
 
-        (send *pr2* :inverse-kinematics
+        (send *pr2* :larm :inverse-kinematics
               (make-coords :pos (float-vector 350 600 100))
-                    :debug-view t
+                    :debug-view nil
                     :rotation-axis nil)
         (move 5000)
 
-        (send *ri* :stop-grasp :rarm)
+        (send *ri* :stop-grasp :larm)
 
         (init))))
