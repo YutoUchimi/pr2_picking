@@ -20,6 +20,12 @@
   <node name="apply_context_to_label_proba"
         pkg="jsk_perception" type="apply_context_to_label_probability">
     <remap from="~input" to="fcn_object_segmentation/output/proba_image" />
+    <rosparam>
+      candidates:
+        - 3
+        - 13
+        - 37
+    </rosparam>
   </node>
 
   <!-- label -> mask -> indices -> cloud -> resized cloud  -> cluster indices -->
