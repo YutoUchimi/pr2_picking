@@ -68,6 +68,16 @@
     </rosparam>
   </node>
 
+  <node name="invert_table_mask"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_perception/ApplyMaskImage $(arg NODELET_MANAGER)">
+    <remap from="~input" to="cluster_indices_decomposer_table/mask" />
+    <remap from="~input/mask" to="cluster_indices_decomposer_table/mask" />
+    <rosparam>
+      negative: true
+    </rosparam>
+  </node>
+
   <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
     <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
     <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)" />
