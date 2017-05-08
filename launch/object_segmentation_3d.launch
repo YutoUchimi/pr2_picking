@@ -10,10 +10,12 @@
   <node name="fcn_object_segmentation"
         pkg="jsk_perception" type="fcn_object_segmentation.py" output="screen">
     <remap from="~input" to="$(arg INPUT_IMAGE)" />  <!-- rgb timestamp -->
+    <remap from="~input/mask" to="invert_table_mask/output/mask" />
     <rosparam subst_value="true">
       gpu: 0  <!-- cpu=-1, gpu=0 -->
       model_name: fcn32s
       model_h5: $(find jsk_apc2016_common)/trained_data/fcn32s_v2_148000.chainermodel
+      use_mask: true
     </rosparam>
     <remap from="~target_names" to="label_names" />
   </node>
@@ -22,9 +24,10 @@
     <remap from="~input" to="fcn_object_segmentation/output/proba_image" />
     <rosparam>
       candidates:
+        - 0
         - 3
-        - 13
-        - 37
+<!--    - 13
+        - 37-->
     </rosparam>
   </node>
 
