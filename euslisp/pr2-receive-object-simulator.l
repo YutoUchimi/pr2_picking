@@ -22,10 +22,16 @@
 (objects (list *pr2* *box*))
 
 
+;; flush IRT-viewer based on real robot angle-vector
+(defun viewer()
+  (send *irtviewer* :draw-objects :flush t))
+
+
 ;; reset pose and stop grasp
 (defun init()
   (send *pr2* :reset-pose)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *irtviewer* :draw-objects :flush t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 10000)
   (send *ri* :stop-grasp)
   (send *ri* :wait-interpolation)
   (send str_msg :data "start"))
@@ -51,6 +57,14 @@
   (setq center-y (aref (send *box* :centroid) 1))
   (setq center-z (aref (send *box* :centroid) 2))
 
+  (setq maxpoint-x (aref (send (send *box* :box) :maxpoint) 0))
+  (setq maxpoint-y (aref (send (send *box* :box) :maxpoint) 1))
+  (setq maxpoint-z (aref (send (send *box* :box) :maxpoint) 2))
+
+  (setq minpoint-x (aref (send (send *box* :box) :minpoint) 0))
+  (setq minpoint-y (aref (send (send *box* :box) :minpoint) 1))
+  (setq minpoint-z (aref (send (send *box* :box) :minpoint) 2))
+
   ;; (if center
   ;;     (progn (setq center-x (* 1000 (send (send center :position) :x)))
   ;;            (setq center-y (* 1000 (send (send center :position) :y))))
@@ -71,9 +85,9 @@
         (rad2deg (atan (/ (- center-y head-y) center-x))))
   (send *pr2* :head :neck-p :joint-angle
         (rad2deg (atan (/ (- head-z center-z) center-x))))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000 :head-controller)
   (send *ri* :wait-interpolation :head-controller)
-  (objects (list *pr2* *box*))
+  (viewer))
 
 
 ;; search for a target object by swinging his head.
@@ -84,6 +98,7 @@
         (if t ;;(and center box)
             (progn (look-at) (setq flag nil) (format t "111~%"))
           (progn (send *pr2* :head :neck-y :joint-angle 30) ;; see left
+                 (viewer)
                  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
@@ -91,6 +106,7 @@
         (if t ;;(and center box)
             (progn (look-at) (setq flag nil) (format t "222~%"))
           (progn (send *pr2* :head :neck-y :joint-angle -30) ;; see right
+                 (viewer)
                  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
@@ -99,6 +115,7 @@
             (progn (look-at) (setq flag nil) (format t "333~%"))
           (progn (send *pr2* :head :neck-p :joint-angle -30)
                  (send *pr2* :head :neck-y :joint-angle 0) ;; see up
+                 (viewer)
                  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
@@ -106,6 +123,7 @@
         (if t ;;(and center box)
             (progn (look-at) (setq flag nil) (format t "444~%"))
           (progn (send *pr2* :head :neck-p :joint-angle 30) ;; see down
+                 (viewer)
                  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
@@ -113,6 +131,7 @@
         (if t ;;(and center box)
             (progn (look-at) (setq flag nil))
           (progn (send *pr2* :head :neck-p :joint-angle 0) ;; see front
+                 (viewer)
                  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000 :head-controller)
                  (recog-target))))
 
@@ -141,36 +160,49 @@
 
         ;; move both hands to under the detected target object
         (send *pr2* :larm :inverse-kinematics
-              (make-coords :pos (v+ (float-vector center-x center-y center-z)
-                                    #f(100 100 -200))
-                           :rpy (float-vector 0 (deg2rad -45) 0))
+              (make-coords :pos (v+ (float-vector center-x
+                                                  (/ (+ center-y maxpoint-y) 2)
+                                                  minpoint-z)
+                                    (float-vector 0 0 -100))
+                           :rpy (float-vector 0 0 pi))
               :debug-view nil)
         (send *pr2* :rarm :inverse-kinematics
-              (make-coords :pos (v+ (float-vector center-x center-y center-z)
-                                    #f(100 -100 -200))
-                           :rpy (float-vector 0 (deg2rad -45) 0))
+              (make-coords :pos (v+ (float-vector center-x
+                                                  (/ (+ center-y minpoint-y) 2)
+                                                  minpoint-z)
+                                    (float-vector 0 0 -100))
+                           :rpy (float-vector 0 0 pi))
               :debug-view nil)
-        (move 10000)
+        (viewer)
+        (move 8000)
 
         ;; move both hands to the very place where the target object exists
         (send *pr2* :larm :inverse-kinematics
-              (make-coords :pos (v+ (float-vector center-x center-y center-z)
-                                    #f(100 100 0))
-                           :rpy (float-vector 0 (deg2rad -45) 0))
+              (make-coords :pos (v+ (float-vector center-x
+                                                  (/ (+ center-y maxpoint-y) 2)
+                                                  minpoint-z)
+                                    (float-vector 0 0 -50))
+                           :rpy (float-vector 0 0 pi))
               :debug-view nil)
         (send *pr2* :rarm :inverse-kinematics
-              (make-coords :pos (v+ (float-vector center-x center-y center-z)
-                                    #f(100 -100 0))
-                           :rpy (float-vector 0 (deg2rad -45) 0))
+              (make-coords :pos (v+ (float-vector center-x
+                                                  (/ (+ center-y minpoint-y) 2)
+                                                  minpoint-z)
+                                    (float-vector 0 0 -50))
+                           :rpy (float-vector 0 0 pi))
               :debug-view nil)
-        (move 3000)
+        (viewer)
+        (move 4000)
 
         ;; hold the target object in front of PR2
         (send *pr2* :init-pose)
         (send *pr2* :l_shoulder_lift_joint :joint-angle 50)
         (send *pr2* :l_elbow_flex_joint :joint-angle -75)
+        (send *pr2* :l_wrist_roll_joint :joint-angle 180)
         (send *pr2* :r_shoulder_lift_joint :joint-angle 50)
         (send *pr2* :r_elbow_flex_joint :joint-angle -75)
+        (send *pr2* :r_wrist_roll_joint :joint-angle 180)
+        (viewer)
         (move 5000)
 
         (init))))
