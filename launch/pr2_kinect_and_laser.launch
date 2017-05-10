@@ -2,7 +2,7 @@
 
   <node name="$(anon rviz)"
         pkg="rviz" type="rviz"
-        args="-d $(find pr2_picking)/rvizconfig/rosbag_play_kinect_and_laser.rviz" />
+        args="-d $(find pr2_picking)/rvizconfig/pr2.rviz" />
 
 <!-- {{ kinect -->
 

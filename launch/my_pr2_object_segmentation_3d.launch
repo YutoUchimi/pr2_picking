@@ -16,9 +16,7 @@
 
   <!-- <arg name="INPUT_IMAGE" value="/kinect_head_c2/rgb/image_rect_color" /> -->
   <arg name="INPUT_IMAGE" value="/image_resizer/output/kinect_head_c2/rgb/image" />
-  <!--
-  <arg name="INPUT_CLOUD" value="/kinect_head_c2/depth_registered/points" />
-  -->
+  <!-- <arg name="INPUT_CLOUD" value="/kinect_head_c2/depth_registered/points" /> -->
   <arg name="INPUT_CLOUD" value="/add_color_organized/output" />
 
   <!-- visualization -->
