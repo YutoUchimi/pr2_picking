@@ -20,6 +20,7 @@
       <remap from="out" to="/kinect_head_localhost/rgb/image_raw" />
     </node>
   </group>
+
   <group ns="/kinect_head_localhost/rgb">
     <node name="rectify_rgb"
           pkg="nodelet" type="nodelet"
@@ -29,6 +30,7 @@
       <remap from="image_rect" to="image_rect_color" />
     </node>
   </group>
+
   <group ns="/kinect_head_c2/depth_registered">
     <node name="republish_depth"
           pkg="image_transport" type="republish"
@@ -37,6 +39,7 @@
       <remap from="out" to="/kinect_head_localhost/depth_registered/hw_registered/image_rect_raw" />
     </node>
   </group>
+
   <group ns="kinect_head_localhost">
     <node name="pointcloud_xyzrgb"
           pkg="nodelet" type="nodelet"
@@ -109,22 +112,5 @@
 
 <!-- }} organize laser -->
 
-<!--
-  <node name="laser_scan_to_point_cloud2"
-        pkg="laser_scan_3d" type="laser_scan_to_point_cloud2.py">
-    <remap from="scan" to="/tilt_scan" />
-  </node>
-  <node pkg="jsk_pcl_ros" type="tilt_laser_listener"
-        name="tilt_laser_listener"
-        output="screen">
-    <remap from="~input" to="/joint_states" />
-    <rosparam>
-      laser_type: tilt
-      joint_name: laser_tilt_mount_joint
-      use_laser_assembler: false
-    </rosparam>
-    <remap from="~assemble_scans2" to="assemble_scans2" />
-  </node>
--->
 
 </launch>
