@@ -81,6 +81,7 @@
       target_frame_id: /head_mount_kinect_rgb_optical_frame
     </rosparam>
   </node>
+
   <node name="add_color"
         pkg="nodelet" type="nodelet"
         args="standalone jsk_pcl/AddColorFromImage">
@@ -111,6 +112,5 @@
   </node>
 
 <!-- }} organize laser -->
-
 
 </launch>
