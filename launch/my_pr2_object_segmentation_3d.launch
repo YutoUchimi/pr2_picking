@@ -3,7 +3,8 @@
   <arg name="gui" default="false" />
 
   <node name="image_resizer"
-        pkg="resized_image_transport" type="image_resizer">
+        pkg="resized_image_transport" type="image_resizer"
+        respawn="true">
     <remap from="~input/image" to="/kinect_head_c2/rgb/image_rect_color" />
     <remap from="~input/camera_info" to="/kinect_head_c2/rgb/camera_info" />
     <remap from="~output/image" to="/image_resizer/output/kinect_head_c2/rgb/image" />
@@ -14,8 +15,8 @@
     </rosparam>
   </node>
 
-  <!-- <arg name="INPUT_IMAGE" value="/kinect_head_c2/rgb/image_rect_color" /> -->
-  <arg name="INPUT_IMAGE" value="/image_resizer/output/kinect_head_c2/rgb/image" />
+  <arg name="INPUT_IMAGE" value="/kinect_head_c2/rgb/image_rect_color" />
+  <!-- <arg name="INPUT_IMAGE" value="/image_resizer/output/kinect_head_c2/rgb/image" /> -->
   <!-- <arg name="INPUT_CLOUD" value="/kinect_head_c2/depth_registered/points" /> -->
   <arg name="INPUT_CLOUD" value="/add_color_organized/output" />
 
@@ -31,8 +32,11 @@
   </node>
 
   <arg name="NODELET_MANAGER" value="sample_manager" />
+
   <node name="$(arg NODELET_MANAGER)"
-        pkg="nodelet" type="nodelet" args="manager" />
+        pkg="nodelet" type="nodelet" args="manager"
+        respawn="true" respawn_delay="60"/>
+
   <param name="label_to_mask/label_value" value="37" />
 
   <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
@@ -44,6 +48,7 @@
       estimate_normal: true
     </rosparam>
   </node>
+
   <node name="cluster_indices_decomposer_table"
         pkg="nodelet" type="nodelet"
         args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg NODELET_MANAGER)">
@@ -54,6 +59,7 @@
       queue_size: 1000
     </rosparam>
   </node>
+
   <node name="extract_indices_table"
         pkg="nodelet" type="nodelet"
         args="load jsk_pcl/ExtractIndices $(arg NODELET_MANAGER)">
