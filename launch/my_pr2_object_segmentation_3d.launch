@@ -34,8 +34,7 @@
   <arg name="NODELET_MANAGER" value="sample_manager" />
 
   <node name="$(arg NODELET_MANAGER)"
-        pkg="nodelet" type="nodelet" args="manager"
-        respawn="true" respawn_delay="60"/>
+        pkg="nodelet" type="nodelet" args="manager" />
 
   <param name="label_to_mask/label_value" value="37" />
 
@@ -85,6 +84,7 @@
   <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
     <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
     <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)" />
+    <arg name="INPUT_MASK_IMAGE" value="invert_table_mask/output/mask" />
     <arg name="INPUT_CLOUD" value="extract_indices_table/output" />
     <arg name="FIXED_FRAME" value="base_link" />
   </include>
