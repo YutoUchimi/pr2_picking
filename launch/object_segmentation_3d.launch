@@ -27,8 +27,8 @@
       candidates:
         - 0
         - 3
-<!--    - 13
-        - 37-->
+        - 13
+        - 37
     </rosparam>
   </node>
 
