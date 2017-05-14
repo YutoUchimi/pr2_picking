@@ -1,5 +1,15 @@
 <launch>
+
+  <arg name="rviz_gui" default="true" />
+
   <include file="$(find pr2_picking)/launch/pr2_kinect_and_laser.launch" />
   <include file="$(find pr2_picking)/launch/my_pr2_object_segmentation_3d.launch" />
-  <!-- <include file="$(find pr2_picking)/launch/pr2_detect_3_colors.launch" /> -->
+  <!-- <include file="$(find pr2_picking)/launch/detect_rgb.launch" /> -->
+
+  <group if="$(arg rviz_gui)">
+    <node name="$(anon rviz)"
+          pkg="rviz" type="rviz"
+          args="-d $(find pr2_picking)/rvizconfig/pr2.rviz" />
+  </group>
+
 </launch>

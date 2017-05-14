@@ -1,7 +1,5 @@
 <launch>
 
-  <arg name="gui" default="false" />
-
   <node name="image_resizer"
         pkg="resized_image_transport" type="image_resizer"
         respawn="true">
@@ -90,14 +88,5 @@
     <arg name="INPUT_CLOUD" value="extract_indices_table/output" />
     <arg name="FIXED_FRAME" value="base_link" />
   </include>
-
-  <group if="$(arg gui)">
-    <node name="rviz"
-          pkg="rviz" type="rviz"
-          args="-d $(find pr2_picking)/rviz/sample_object_segmentation_3d.rviz">
-      <remap from="/head_camera/rgb/image_rect_color" to="/kinect_head_local/rgb/image_rect_color" />
-      <remap from="/head_camera/depth_registered/points" to="/add_color_organized/output" />
-    </node>
-  </group>
 
 </launch>
