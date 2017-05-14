@@ -1,9 +1,5 @@
 <launch>
 
-  <node name="$(anon rviz)"
-        pkg="rviz" type="rviz"
-        args="-d $(find pr2_picking)/rvizconfig/pr2.rviz" />
-
 <!-- {{ kinect -->
 
   <group ns="/kinect_head/rgb">
