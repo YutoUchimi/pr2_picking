@@ -1,6 +1,7 @@
 <launch>
 
   <arg name="rviz_gui" default="true"/>
+  <arg name="reconfigure_gui" default="false"/>
   <arg name="gazebo_gui" default="true"/>
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -50,5 +51,13 @@
           args="-d $(find pr2_picking)/rvizconfig/pr2_gazebo.rviz"/>
   </group>
 <!-- }} rviz -->
+
+<!-- {{ rqt_reconfigure -->
+  <group if="$(arg reconfigure_gui)">
+    <node name="rqt_reconfigure"
+          pkg="rqt_reconfigure" type="rqt_reconfigure"/>
+  </group>
+<!-- }} rqt_reconfigure -->
+
 
 </launch>
