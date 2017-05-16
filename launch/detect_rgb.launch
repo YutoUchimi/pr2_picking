@@ -1,26 +1,29 @@
 <launch>
+  <arg name="DEFAULT_NAMESPACE" default="/wide_stereo" />
+  <arg name="INPUT_CLOUD" default="points2" />
+
   <include file="$(find pr2_picking)/launch/hsi_color_filter.launch" >
-    <arg name="DEFAULT_NAMESPACE" value="/add_color_organized" />
-    <arg name="INPUT" value="output" />
-    <arg name="FILTER_NAME_SUFFIX" value="/red" />
+    <arg name="DEFAULT_NAMESPACE" value="$(arg DEFAULT_NAMESPACE)" />
+    <arg name="INPUT" value="$(arg INPUT_CLOUD)" />
+    <arg name="FILTER_NAME_SUFFIX" value="red" />
     <arg name="h_max" value="10" />
     <arg name="h_min" value="-30" />
     <arg name="s_min" value="100" />
   </include>
 
   <include file="$(find pr2_picking)/launch/hsi_color_filter.launch" >
-    <arg name="DEFAULT_NAMESPACE" value="/add_color_organized" />
-    <arg name="INPUT" value="output" />
-    <arg name="FILTER_NAME_SUFFIX" value="/green" />
+    <arg name="DEFAULT_NAMESPACE" value="$(arg DEFAULT_NAMESPACE)" />
+    <arg name="INPUT" value="$(arg INPUT_CLOUD)" />
+    <arg name="FILTER_NAME_SUFFIX" value="green" />
     <arg name="h_max" value="-115" />
-    <arg name="h_min" value="-128" />
+    <arg name="h_min" value="125" />
     <arg name="s_min" value="80" />
   </include>
 
   <include file="$(find pr2_picking)/launch/hsi_color_filter.launch" >
-    <arg name="DEFAULT_NAMESPACE" value="/add_color_organized" />
-    <arg name="INPUT" value="output" />
-    <arg name="FILTER_NAME_SUFFIX" value="/blue" />
+    <arg name="DEFAULT_NAMESPACE" value="$(arg DEFAULT_NAMESPACE)" />
+    <arg name="INPUT" value="$(arg INPUT_CLOUD)" />
+    <arg name="FILTER_NAME_SUFFIX" value="blue" />
     <arg name="h_max" value="-75" />
     <arg name="h_min" value="-115" />
     <arg name="s_min" value="110" />
