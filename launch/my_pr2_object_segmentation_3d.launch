@@ -32,7 +32,8 @@
   <arg name="NODELET_MANAGER" value="sample_manager" />
 
   <node name="$(arg NODELET_MANAGER)"
-        pkg="nodelet" type="nodelet" args="manager" >
+        pkg="nodelet" type="nodelet" args="manager"
+        respawn="true" >
     <param name="num_worker_threads" value="8" />
   </node>
 
@@ -50,7 +51,8 @@
 
   <node name="cluster_indices_decomposer_table"
         pkg="nodelet" type="nodelet"
-        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg NODELET_MANAGER)">
+        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg NODELET_MANAGER)"
+        respawn="true" >
     <remap from="~input" to="$(arg INPUT_CLOUD)" />
     <remap from="~target" to="multi_plane_estimate/output" />
     <rosparam subst_value="true">
@@ -61,7 +63,8 @@
 
   <node name="extract_indices_table"
         pkg="nodelet" type="nodelet"
-        args="load jsk_pcl/ExtractIndices $(arg NODELET_MANAGER)">
+        args="load jsk_pcl/ExtractIndices $(arg NODELET_MANAGER)"
+        respawn="true" >
     <remap from="~input" to="$(arg INPUT_CLOUD)" />
     <remap from="~indices" to="cluster_indices_decomposer_table/negative_indices" />
     <rosparam>
@@ -73,13 +76,16 @@
 
   <node name="invert_table_mask"
         pkg="nodelet" type="nodelet"
-        args="load jsk_perception/ApplyMaskImage $(arg NODELET_MANAGER)">
+        args="load jsk_perception/ApplyMaskImage $(arg NODELET_MANAGER)"
+        respawn="true" >
     <remap from="~input" to="cluster_indices_decomposer_table/mask" />
     <remap from="~input/mask" to="cluster_indices_decomposer_table/mask" />
     <rosparam>
       negative: true
     </rosparam>
   </node>
+
+  <arg name="NODELET_RESPAWN" default="true"/>
 
   <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
     <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
