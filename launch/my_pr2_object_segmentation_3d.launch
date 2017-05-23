@@ -1,20 +1,25 @@
 <launch>
 
-  <node name="image_resizer"
-        pkg="resized_image_transport" type="image_resizer"
-        respawn="true">
-    <remap from="~input/image" to="/kinect_head_c2/rgb/image_rect_color" />
-    <remap from="~input/camera_info" to="/kinect_head_c2/rgb/camera_info" />
-    <remap from="~output/image" to="/image_resizer/output/kinect_head_c2/rgb/image" />
-    <remap from="~output/camera_info" to="/image_resizer/output/kinect_head_c2/rgb/camera_info" />
-    <rosparam>
-      resize_scale_x: 0.25
-      resize_scale_y: 0.25
-    </rosparam>
-  </node>
+  <arg name="IMAGE_RESIZE" default="false" />
 
-  <arg name="INPUT_IMAGE" value="/kinect_head_c2/rgb/image_rect_color" />
-  <!-- <arg name="INPUT_IMAGE" value="/image_resizer/output/kinect_head_c2/rgb/image" /> -->
+  <group if="$(arg IMAGE_RESIZE)">
+    <node name="image_resizer"
+          pkg="resized_image_transport" type="image_resizer"
+          respawn="true">
+      <remap from="~input/image" to="/kinect_head_localhost/rgb/image_rect_color" />
+      <remap from="~input/camera_info" to="/kinect_head_c2/rgb/camera_info" />
+      <remap from="~output/image" to="/image_resizer/output/kinect_head_localhost/rgb/image_rect_color" />
+      <remap from="~output/camera_info" to="/image_resizer/output/kinect_head_c2/rgb/camera_info" />
+      <rosparam>
+        resize_scale_x: 0.25
+        resize_scale_y: 0.25
+      </rosparam>
+    </node>
+  </group>
+
+  <!-- <arg name="INPUT_IMAGE" value="/image_resizer/output/kinect_head_localhost/rgb/image_rect_color" /> -->
+  <arg name="INPUT_IMAGE" value="/kinect_head_localhost/rgb/image_rect_color" />
+
   <!-- <arg name="INPUT_CLOUD" value="/kinect_head_c2/depth_registered/points" /> -->
   <arg name="INPUT_CLOUD" value="/add_color_organized/output" />
 
@@ -87,8 +92,6 @@
       negative: true
     </rosparam>
   </node>
-
-  <arg name="NODELET_RESPAWN" default="true"/>
 
   <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
     <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
