@@ -93,8 +93,6 @@
     </rosparam>
   </node>
 
-  <arg name="NODELET_RESPAWN" default="true"/>
-
   <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
     <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
     <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)" />
