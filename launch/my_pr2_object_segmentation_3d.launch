@@ -1,8 +1,8 @@
 <launch>
 
-  <arg name="IMAGE_RESIZE" default="false" />
-  <arg name="USE_TORCH" default="true" />
-  <arg name="GPU" default="0" />
+  <arg name="IMAGE_RESIZE" />
+  <arg name="USE_TORCH" />
+  <arg name="GPU" />
 
   <group if="$(arg IMAGE_RESIZE)">
     <node name="image_resizer"
@@ -48,7 +48,8 @@
 
   <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
         args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg NODELET_MANAGER)"
-        output="screen">
+        output="screen"
+        respawn="true" >
     <remap from="~input" to="$(arg INPUT_CLOUD)" />
     <rosparam>
       max_curvature: 0.01
