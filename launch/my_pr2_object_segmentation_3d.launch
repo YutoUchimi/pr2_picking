@@ -1,7 +1,8 @@
 <launch>
 
-  <arg name="IMAGE_RESIZE" default="false" />
-  <arg name="USE_TORCH" default="true" />  <!-- true -> torch; false -> chainer -->
+  <arg name="IMAGE_RESIZE" />
+  <arg name="USE_TORCH" />
+  <arg name="GPU" />
 
   <group if="$(arg IMAGE_RESIZE)">
     <node name="image_resizer"
@@ -47,7 +48,8 @@
 
   <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
         args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg NODELET_MANAGER)"
-        output="screen">
+        output="screen"
+        respawn="true" >
     <remap from="~input" to="$(arg INPUT_CLOUD)" />
     <rosparam>
       max_curvature: 0.01
@@ -94,19 +96,15 @@
     </rosparam>
   </node>
 
-  <arg name="INPUT_MASK_IMAGE" value="invert_table_mask/output/mask" />
-  <arg name="INPUT_CLOUD" value="extract_indices_table/output" />
-  <arg name="GPU" value="0" />  <!-- cpu=-1, gpu=0 -->
-
   <group if="$(arg USE_TORCH)" >
     <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
       <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
       <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)" />
-      <arg name="INPUT_MASK_IMAGE" value="$(arg INPUT_MASK_IMAGE)" />
-      <arg name="INPUT_CLOUD" value="$(arg INPUT_CLOUD)" />
+      <arg name="INPUT_MASK_IMAGE" value="invert_table_mask/output/mask" />
+      <arg name="INPUT_CLOUD" value="extract_indices_table/output" />
       <arg name="FIXED_FRAME" value="base_link" />
       <arg name="BACKEND" value="torch" />
-      <arg name="GPU" value="0" />
+      <arg name="GPU" value="$(arg GPU)" />
       <arg name="MODEL_NAME" value="fcn32s_bilinear" />
       <arg name="MODEL_FILE" value="$(find jsk_arc2017_common)/data/models/fcn32s_arc2017_dataset_v1_20170417.pth" />
       <arg name="LABEL_YAML" value="$(find jsk_arc2017_common)/config/label_names.yaml" />
@@ -116,11 +114,11 @@
     <include file="$(find pr2_picking)/launch/object_segmentation_3d.launch">
       <arg name="NODELET_MANAGER" value="$(arg NODELET_MANAGER)" />
       <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)" />
-      <arg name="INPUT_MASK_IMAGE" value="$(arg INPUT_MASK_IMAGE)" />
-      <arg name="INPUT_CLOUD" value="$(arg INPUT_CLOUD)" />
+      <arg name="INPUT_MASK_IMAGE" value="invert_table_mask/output/mask" />
+      <arg name="INPUT_CLOUD" value="extract_indices_table/output" />
       <arg name="FIXED_FRAME" value="base_link" />
       <arg name="BACKEND" value="chainer" />
-      <arg name="GPU" value="0" />
+      <arg name="GPU" value="$(arg GPU)" />
       <arg name="MODEL_NAME" value="fcn32s" />
       <arg name="MODEL_FILE" value="$(find jsk_apc2016_common)/trained_data/fcn32s_v2_148000.chainermodel" />
       <arg name="LABEL_YAML" value="$(find jsk_apc2016_common)/config/label_names.yaml" />
