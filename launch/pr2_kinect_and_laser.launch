@@ -47,7 +47,7 @@
   <node name="laser_profile_commander"
         pkg="laser_scan_3d"
         type="my_robot_cal_tilt_profile.py"
-        args="laser_tilt_controller 4" />
+        args="laser_tilt_controller 29" />
 
   <node name="laser_scan_assembler"
         pkg="laser_assembler" type="laser_scan_assembler">
@@ -55,13 +55,14 @@
     <rosparam>
       fixed_frame: base_link
       tf_cache_time_secs: 10.0
-      max_scans: 200
+      max_scans: 1200
       ignore_laser_skew: true
     </rosparam>
   </node>
 
   <node name="assemble_scans2_client"
-        pkg="laser_scan_3d" type="assemble_scans2.py">
+        pkg="laser_scan_3d" type="assemble_scans2.py"
+        args="30.0" >
     <remap from="scan" to="tilt_scan" />
   </node>
 
