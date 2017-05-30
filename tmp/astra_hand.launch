@@ -21,8 +21,8 @@
     <arg name="device_id" value="$(arg device_1_id)" />
     <arg name="publish_tf" value="false" />
     <arg name="depth_registration" value="$(arg depth_registration)" />
-    <arg name="rgb_camera_info_url" value="file://$(env HOME)/.ros/camera_info/rgb_$(arg device_1_id).yaml" />
-    <arg name="depth_camera_info_url" value="file://$(env HOME)/.ros/camera_info/depth_$(arg device1_id).yaml" />
+    <arg name="rgb_camera_info_url" value="file://$(find pr2_picking)/tmp/rgb_$(arg device_1_id).yaml" />
+    <arg name="depth_camera_info_url" value="file://$(find pr2_picking)/tmp/depth_$(arg device1_id).yaml" />
   </include>
   <node name="left_hand_camera_rgb_static_tf_publisher"
         pkg="tf" type="static_transform_publisher"
@@ -40,10 +40,8 @@
     <arg name="device_id" value="$(arg device_2_id)" />
     <arg name="publish_tf" value="false" />
     <arg name="depth_registration" value="$(arg depth_registration)" />
-    <!-- <arg name="rgb_camera_info_url" value="file://$(find jsk_2016_01_baxter_apc)/data/astra/right_hand_rgb.yaml" /> -->
-    <!-- <arg name="depth_camera_info_url" value="file://$(find jsk_2016_01_baxter_apc)/data/astra/right_hand_depth.yaml" /> -->
-    <arg name="rgb_camera_info_url" value="file://$(env HOME)/.ros/camera_info/rgb_$(arg device_2_id).yaml" />
-    <arg name="depth_camera_info_url" value="file://$(env HOME)/.ros/camera_info/depth_$(arg device2_id).yaml" />
+    <arg name="rgb_camera_info_url" value="file://$(find pr2_picking)/tmp/rgb_$(arg device_2_id).yaml" />
+    <arg name="depth_camera_info_url" value="file://$(find pr2_picking)/tmp/depth_$(arg device2_id).yaml" />
 
   </include>
   <node name="right_hand_camera_rgb_static_tf_publisher"
