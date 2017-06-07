@@ -58,8 +58,8 @@
     <remap from="scan" to="/tilt_scan" />
     <rosparam>
       fixed_frame: base_link
-      tf_cache_time_secs: 10.0
       max_scans: 400
+      tf_cache_time_secs: 10.0
       ignore_laser_skew: true
     </rosparam>
   </node>
@@ -67,6 +67,10 @@
   <node name="assemble_scans2_client"
         pkg="laser_scan_3d" type="assemble_scans2.py">
     <remap from="scan" to="tilt_scan" />
+    <rosparam>
+      assemble_interval: 10.0
+      queue_size: 10
+    </rosparam>
   </node>
 
 <!-- }} laser -->
