@@ -45,25 +45,33 @@
 <!-- {{ laser -->
 
   <node name="laser_profile_commander"
-        pkg="laser_scan_3d"
-        type="my_robot_cal_tilt_profile.py"
-        args="laser_tilt_controller 29" />
+        pkg="pr2_picking" type="robot_cal_tilt_profile.py"
+        args="laser_tilt_controller" >
+    <rosparam>
+      cycle_time: 30.0
+      max_tilt_angle: 1.0
+      min_tilt_angle: -0.7
+    </rosparam>
+  </node>
 
   <node name="laser_scan_assembler"
         pkg="laser_assembler" type="laser_scan_assembler">
-    <remap from="scan" to="/tilt_scan" />
+    <remap from="scan" to="tilt_scan" />
     <rosparam>
       fixed_frame: base_link
-      tf_cache_time_secs: 10.0
       max_scans: 1200
+      tf_cache_time_secs: 10.0
       ignore_laser_skew: true
     </rosparam>
   </node>
 
-  <node name="assemble_scans2_client"
-        pkg="laser_scan_3d" type="assemble_scans2.py"
-        args="30.0" >
+  <node name="assemble_scans_client"
+        pkg="laser_scan_3d" type="assemble_scans2.py" >
     <remap from="scan" to="tilt_scan" />
+    <rosparam>
+      assemble_interval: 30.0
+      queue_size: 10
+    </rosparam>
   </node>
 
 <!-- }} laser -->
