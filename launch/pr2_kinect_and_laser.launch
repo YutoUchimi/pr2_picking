@@ -45,7 +45,7 @@
 <!-- {{ laser -->
 
   <node name="laser_profile_commander"
-        pkg="laser_scan_3d" type="my_robot_cal_tilt_profile.py"
+        pkg="pr2_picking" type="robot_cal_tilt_profile.py"
         args="laser_tilt_controller" >
     <rosparam>
       cycle_time: 30.0
