@@ -1,0 +1,143 @@
+<launch>
+
+  <!-- Arguments -->
+  <arg name="camera" value="kinect_head"/>
+  <arg name="FIXED_FRAME" value="base_link"/>
+  <arg name="NODELET_MANAGER" value="sample_manager"/>
+
+  <node name="$(arg NODELET_MANAGER)"
+        pkg="nodelet" type="nodelet" args="manager"
+        respawn="true"
+        output="screen"/>
+
+  <!-- Crop table region -->
+  <!-- <node name="transformable_interactive_server" -->
+  <!--       pkg="jsk_interactive_marker" type="transformable_server_sample"> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     display_interactive_manipulator: true -->
+  <!--     display_interactive_manipulator_only_selected: true -->
+  <!--     display_description_only_selected: true -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="transformable_table_markers" -->
+  <!--       pkg="jsk_interactive_marker" type="transformable_markers_client.py"> -->
+  <!--   <remap from="~server" to="transformable_interactive_server" /> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     config_file: $(find housework_support)/config/table_marker.yaml -->
+  <!--     config_auto_save: true -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="bbox_array_to_bbox" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl_utils/BoundingBoxArrayToBoundingBox $(arg NODELET_MANAGER)" -->
+  <!--       respawn="true" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~input" to="/transformable_table_markers/output/boxes"/> -->
+  <!--   <rosparam> -->
+  <!--     index: 0 -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="attention_clipper_table" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/AttentionClipper $(arg NODELET_MANAGER)" -->
+  <!--       respawn="true" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~input" to="/$(arg camera)/depth_registered/camera_info"/> -->
+  <!--   <remap from="~input/points" to="/$(arg camera)/depth_predicted/points"/> -->
+  <!--   <remap from="~input/box" to="bbox_array_to_bbox/output"/> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     use_multiple_attention: false -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="extract_indices_table" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/ExtractIndices $(arg NODELET_MANAGER)" -->
+  <!--       respawn="true" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~input" to="/$(arg camera)/depth_predicted/points"/> -->
+  <!--   <remap from="~indices" to="attention_clipper_table/output/point_indices"/> -->
+  <!--   <rosparam> -->
+  <!--     keep_organized: true -->
+  <!--     approximate_sync: true -->
+  <!--     max_queue_size: 100 -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- Remove table plane -->
+  <!-- <node name="multi_plane_estimate" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg NODELET_MANAGER)" -->
+  <!--       respawn="true" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~input" to="extract_indices_table/output"/> -->
+  <!--   <rosparam> -->
+  <!--     max_curvature: 0.01 -->
+  <!--     min_size: 5000 -->
+  <!--     estimate_normal: true -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="cluster_indices_decomposer_table" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg NODELET_MANAGER)" -->
+  <!--       respawn="true" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~input" to="extract_indices_table/output"/> -->
+  <!--   <remap from="~target" to="multi_plane_estimate/output"/> -->
+  <!--   <rosparam> -->
+  <!--     approximate_sync: true -->
+  <!--     queue_size: 1000 -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="extract_indices_table_negative" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/ExtractIndices $(arg NODELET_MANAGER)" -->
+  <!--       respawn="true" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~input" to="extract_indices_table/output" /> -->
+  <!--   <remap from="~indices" to="cluster_indices_decomposer_table/negative_indices" /> -->
+  <!--   <rosparam> -->
+  <!--     approximate_sync: true -->
+  <!--     queue_size: 100 -->
+  <!--     keep_organized: true -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- Get target bounding box -->
+  <node name="euclidean_clustering"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/EuclideanClustering $(arg NODELET_MANAGER)"
+        respawn="true"
+        output="screen">
+    <remap from="~input" to="/kinect_head/depth_predicted/points" />
+    <rosparam>
+      min_size: 100
+      max_size: 10000
+      tolerance: 0.05
+    </rosparam>
+  </node>
+
+  <node name="cluster_indices_decomposer_target"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg NODELET_MANAGER)"
+        respawn="true"
+        output="screen">
+    <remap from="~input" to="/kinect_head/depth_predicted/points" />
+    <remap from="~target" to="euclidean_clustering/output" />
+    <rosparam subst_value="true">
+      approximate_sync: true
+      queue_size: 100
+      sort_by: -cloud_size
+      align_boxes: true
+      align_boxes_with_plane: false
+      use_pca: true
+      target_frame_id: $(arg FIXED_FRAME)
+    </rosparam>
+  </node>
+
+</launch>
