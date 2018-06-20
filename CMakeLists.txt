@@ -8,9 +8,7 @@ project(pr2_picking)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  nodelet
-  std_msgs
-  rospy)
+  )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,7 +102,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pr2_picking
-  CATKIN_DEPENDS nodelet std_msgs rospy
+  CATKIN_DEPENDS
 #  DEPENDS system_lib
 )
 
